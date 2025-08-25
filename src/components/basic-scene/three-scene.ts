@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import gsap from 'gsap';
 
 export function initThreeScene() {
     //scene
@@ -38,7 +39,7 @@ export function initThreeScene() {
 
     // cube
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 'green' });
+    const material = new THREE.MeshBasicMaterial({ color: 'brown', transparent: true, opacity: 1, wireframe: false });
     const GreenMesh = new THREE.Mesh(geometry, material);
     scene.add(GreenMesh);
     // GreenMesh.position.set(0.7, -0.6, 1);
@@ -58,8 +59,11 @@ export function initThreeScene() {
 
     //camera
     const camera = new THREE.PerspectiveCamera(75, screenSize.width / screenSize.height, 0.1, 100);
-    camera.position.z = 3;
-        scene.add(camera);
+    camera.position.z = 2;
+    camera.position.y = 2;
+    camera.position.x = 2;
+    camera.lookAt(GreenMesh.position);
+    scene.add(camera);
 
     // camera.lookAt(GreenMesh.position);
 
@@ -73,17 +77,24 @@ export function initThreeScene() {
     renderer.render(scene, camera);
 
     //Time 
-    let time = Date.now();
+    // let time = Date.now();
+    gsap.to(GreenMesh.rotation, {
+        y: Math.PI * 2,
+        duration: 1,
+        ease: 'none',
+        repeat: -1,
+        paused: false
+    })
 
     //Request Animation Frame
     const animate = () => {
-        const currentTime = Date.now();
-        const deltaTime = currentTime - time;
-        time = currentTime;
+        // const currentTime = Date.now();
+        // const deltaTime = currentTime - time;
+        // time = currentTime;
 
-        // console.log(deltaTime);
+        // // console.log(deltaTime);
 
-        GreenMesh.rotation.y += 0.001 * deltaTime;
+        // GreenMesh.rotation.y += 0.001 * deltaTime;
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }
