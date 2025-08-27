@@ -2,6 +2,18 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 
 export function initThreeScene() {
+
+    //cursor
+    const cursor = {
+        x: 0,
+        y: 0
+    }
+    window.addEventListener('mousemove', (e) => {
+        // console.log("x: ", cursor.x, "y: ", cursor.y);
+        cursor.x = e.clientX / screenSize.width - 0.5;
+        cursor.y = - (e.clientY / screenSize.height - 0.5);
+    })
+
     //scene
     const scene = new THREE.Scene();
 
@@ -58,10 +70,17 @@ export function initThreeScene() {
     // GreenMesh.rotation.x = Math.PI / 0.25;
 
     //camera
+    //(perspective camera)
     const camera = new THREE.PerspectiveCamera(75, screenSize.width / screenSize.height, 0.1, 100);
-    camera.position.z = 2;
-    camera.position.y = 2;
-    camera.position.x = 2;
+    // const aspectRatio = screenSize.width / screenSize.height;
+    //(orthographic camera)
+    // const camera = new THREE.OrthographicCamera(
+    //     //left, right, top, bottom, near, far
+    //     -1 * aspectRatio, 1 * aspectRatio, 1, -1, 0.1, 100
+    // );
+    camera.position.z = 3;
+    // camera.position.y = 2;
+    // camera.position.x = 2;
     camera.lookAt(GreenMesh.position);
     scene.add(camera);
 
@@ -78,13 +97,13 @@ export function initThreeScene() {
 
     //Time 
     // let time = Date.now();
-    gsap.to(GreenMesh.rotation, {
-        y: Math.PI * 2,
-        duration: 1,
-        ease: 'none',
-        repeat: -1,
-        paused: false
-    })
+    // gsap.to(GreenMesh.rotation, {
+    //     y: Math.PI * 2,
+    //     duration: 1,
+    //     ease: 'none',
+    //     repeat: -1,
+    //     paused: false
+    // })
 
     //Request Animation Frame
     const animate = () => {
@@ -95,6 +114,14 @@ export function initThreeScene() {
         // // console.log(deltaTime);
 
         // GreenMesh.rotation.y += 0.001 * deltaTime;
+
+        //update camera
+        camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+        camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+        camera.position.y = cursor.y * 3;
+        camera.lookAt(GreenMesh.position);
+
+
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }
