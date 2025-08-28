@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export function initThreeScene() {
 
@@ -17,10 +18,26 @@ export function initThreeScene() {
     //scene
     const scene = new THREE.Scene();
 
+    const canvas = document.querySelector('#webGL') as HTMLCanvasElement;
+
     const screenSize = {
-        width: 800,
-        height: 600
+        width: window.innerWidth,
+        height: window.innerHeight
     }
+
+    //resize
+    window.addEventListener('resize', () => {
+        //update screen size
+        screenSize.width = window.innerWidth;
+        screenSize.height = window.innerHeight;
+        //update camera aspect ratio
+        camera.aspect = screenSize.width / screenSize.height;
+        camera.updateProjectionMatrix();
+        //update renderer size
+        renderer.setSize(screenSize.width, screenSize.height);
+        //update renderer pixel ratio
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    })
 
     //group cube
     // const groupCube = new THREE.Group();
@@ -86,12 +103,16 @@ export function initThreeScene() {
 
     // camera.lookAt(GreenMesh.position);
 
+    //Controls
+    const controls = new OrbitControls(camera, canvas);
+    // controls.enabled = false;
+    controls.enableDamping = true;
+
     //renderer
-    const canvas = document.querySelector('#webGL') as HTMLCanvasElement;    
     const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
     })
-    
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(screenSize.width, screenSize.height);
     renderer.render(scene, camera);
 
@@ -116,12 +137,13 @@ export function initThreeScene() {
         // GreenMesh.rotation.y += 0.001 * deltaTime;
 
         //update camera
-        camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
-        camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
-        camera.position.y = cursor.y * 3;
-        camera.lookAt(GreenMesh.position);
+        // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+        // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+        // camera.position.y = cursor.y * 3;
+        // camera.lookAt(GreenMesh.position);
 
-
+        //update controls
+        controls.update();
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }
