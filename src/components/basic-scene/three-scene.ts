@@ -39,6 +39,15 @@ export function initThreeScene() {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     })
 
+    //double click for full screen and back to normal screen
+    window.addEventListener('dblclick', () => {
+        if (!document.fullscreenElement) {
+            canvas.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    })
+
     //group cube
     // const groupCube = new THREE.Group();
     // groupCube.scale.y = 2;
@@ -67,8 +76,28 @@ export function initThreeScene() {
     // groupCube.add(cube3);
 
     // cube
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 'brown', transparent: true, opacity: 1, wireframe: false });
+    // const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
+
+    //Buffer Geometry
+    // const positions = new Float32Array([
+    //     0, 0, 0,
+    //     0, 1, 0,
+    //     1, 0, 0,
+    // ]);
+    // const postionAttribute = new THREE.BufferAttribute(positions, 3);
+    // const geometry = new THREE.BufferGeometry();
+    // geometry.setAttribute('position', postionAttribute);
+
+    //random buffer geometry
+    const geometry = new THREE.BufferGeometry();
+    const count = 5000;
+    const positions = new Float32Array(count * 3 * 3);
+    for (let i = 0; i < count * 3; i++) {
+        positions[i] = Math.random() * 3 - 1.5;
+    }
+    const postionAttribute = new THREE.BufferAttribute(positions, 3);
+    geometry.setAttribute('position', postionAttribute);
+    const material = new THREE.MeshBasicMaterial({ color: 'brown', transparent: true, opacity: 1, wireframe: true });
     const GreenMesh = new THREE.Mesh(geometry, material);
     scene.add(GreenMesh);
     // GreenMesh.position.set(0.7, -0.6, 1);
@@ -115,7 +144,7 @@ export function initThreeScene() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(screenSize.width, screenSize.height);
     renderer.render(scene, camera);
-
+// 
     //Time 
     // let time = Date.now();
     // gsap.to(GreenMesh.rotation, {
