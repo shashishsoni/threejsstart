@@ -1,8 +1,30 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import dat from 'dat.gui';
 
-export function initThreeScene() {
+export async function initThreeScene() {
+
+    //debug ui
+    const dat = (await import('dat.gui')).default;
+    const gui = new dat.GUI();
+
+    const parameters = {
+        color: '#8B4513', // brown color in hex format
+        spin: () => {
+            gsap.to(GreenMesh.rotation, {
+                y: GreenMesh.rotation.y + Math.PI * 2,
+            })
+        }
+    }
+
+    gui.addColor(parameters, 'color').name('GreenMesh Color').onChange((value) => {
+        material.color.set(value);
+    });
+
+    gui.add(parameters, 'spin').name('GreenMesh Spin').onChange(() => {
+        parameters.spin();
+    });
 
     //cursor
     const cursor = {
@@ -76,7 +98,7 @@ export function initThreeScene() {
     // groupCube.add(cube3);
 
     // cube
-    // const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
+    const geometry = new THREE.BoxGeometry(1, 1, 1, 4, 4, 4);
 
     //Buffer Geometry
     // const positions = new Float32Array([
@@ -89,18 +111,30 @@ export function initThreeScene() {
     // geometry.setAttribute('position', postionAttribute);
 
     //random buffer geometry
-    const geometry = new THREE.BufferGeometry();
-    const count = 5000;
-    const positions = new Float32Array(count * 3 * 3);
-    for (let i = 0; i < count * 3; i++) {
-        positions[i] = Math.random() * 3 - 1.5;
-    }
-    const postionAttribute = new THREE.BufferAttribute(positions, 3);
-    geometry.setAttribute('position', postionAttribute);
-    const material = new THREE.MeshBasicMaterial({ color: 'brown', transparent: true, opacity: 1, wireframe: true });
+    // const geometry = new THREE.BufferGeometry();
+    // const count = 5000;
+    // const positions = new Float32Array(count * 3 * 3);
+    // for (let i = 0; i < count * 3; i++) {
+    //     positions[i] = Math.random() * 3 - 1.5;
+    // }
+    // const postionAttribute = new THREE.BufferAttribute(positions, 3);
+    // geometry.setAttribute('position', postionAttribute);
+    const material = new THREE.MeshBasicMaterial({ color: parameters.color, transparent: true, opacity: 1, wireframe: true });
     const GreenMesh = new THREE.Mesh(geometry, material);
     scene.add(GreenMesh);
     // GreenMesh.position.set(0.7, -0.6, 1);
+
+
+    //debug
+    gui.add(GreenMesh.position, 'y').min(-3).max(3).step(0.01).name('GreenMesh Position Y');
+    gui.add(GreenMesh.position, 'x').min(-3).max(3).step(0.01).name('GreenMesh Position X');
+    gui.add(GreenMesh.position, 'z').min(-3).max(3).step(0.01).name('GreenMesh Position Z');
+
+    gui.add(GreenMesh, 'visible').name('GreenMesh Visible');
+    gui.add(GreenMesh.material, 'wireframe').name('GreenMesh Wireframe');
+    gui.add(GreenMesh.material, 'transparent').name('GreenMesh Transparent');
+    gui.add(GreenMesh.material, 'opacity').min(0).max(1).step(0.01).name('GreenMesh Opacity');
+    // gui.add(GreenMesh.material, 'color').name('GreenMesh Color');
 
     //axes helper
     const axesHelper = new THREE.AxesHelper(2);
