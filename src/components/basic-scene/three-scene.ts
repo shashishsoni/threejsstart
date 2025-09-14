@@ -70,6 +70,41 @@ export async function initThreeScene() {
         }
     })
 
+    //Texture + loadingManager
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onStart = () => {
+        console.log('texture loading')
+    }
+    loadingManager.onProgress = () => {
+        console.log('texture progress')
+    }
+    loadingManager.onLoad = () => {
+        console.log('texture loaded')
+    }
+    loadingManager.onError = () => {
+        console.log('texture not loaded')
+    }
+    const textureLoader = new THREE.TextureLoader(loadingManager); 
+    const colortexture = textureLoader.load('/minecraft.png');
+    const alphaTexture = textureLoader.load('/door/alpha.jpg');
+    const heightTexture = textureLoader.load('/door/height.jpg');
+    const normalTexture = textureLoader.load('/door/normal.jpg');
+    const ambientOcclusionTexture = textureLoader.load('/door/ambientOcclusion.jpg');
+    const metalnessTexture = textureLoader.load('/door/metalness.jpg');
+    const roughnessTexture = textureLoader.load('/door/roughness.jpg');
+
+    // colortexture.repeat.set(2, 3);
+    // colortexture.wrapS = THREE.RepeatWrapping;
+    // colortexture.wrapT = THREE.RepeatWrapping;
+
+    // colortexture.offset.set(0.5, 0.5);
+    // colortexture.rotation = Math.PI / 4;
+    // colortexture.center.set(0.5, 0.5);
+
+    //minmapping filter
+    // colortexture.minFilter = THREE.NearestFilter;
+    colortexture.magFilter = THREE.NearestFilter; 
+    
     //group cube
     // const groupCube = new THREE.Group();
     // groupCube.scale.y = 2;
@@ -119,7 +154,8 @@ export async function initThreeScene() {
     // }
     // const postionAttribute = new THREE.BufferAttribute(positions, 3);
     // geometry.setAttribute('position', postionAttribute);
-    const material = new THREE.MeshBasicMaterial({ color: parameters.color, transparent: true, opacity: 1, wireframe: true });
+    // const material = new THREE.MeshBasicMaterial({ color: parameters.color, transparent: true, opacity: 1, wireframe: true });
+    const material = new THREE.MeshBasicMaterial({ map: colortexture });
     const GreenMesh = new THREE.Mesh(geometry, material);
     scene.add(GreenMesh);
     // GreenMesh.position.set(0.7, -0.6, 1);
